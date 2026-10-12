@@ -1,36 +1,125 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Resource Reservation Management System
 
-## Getting Started
+A web-based Resource Reservation Management System developed as part of the PrimeWave Software Engineering Internship assessment.
 
-First, run the development server:
+The application allows users to manage resources, create reservations, check availability, and prevent overlapping bookings.
+
+## Features
+
+- Add and manage resources.
+- View available resources.
+- Create reservations with start and end times.
+- Check resource availability for a selected time period.
+- Prevent overlapping reservations for the same resource.
+- Store resource and reservation data in PostgreSQL.
+- REST API endpoints for resources and reservations.
+
+## Technologies Used
+
+- Next.js
+- React
+- TypeScript
+- PostgreSQL
+- Prisma ORM
+- Git and GitHub
+
+## Prerequisites
+
+Before running the project, install:
+
+- Node.js and npm
+- PostgreSQL
+- Git
+
+## Installation and Setup
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/shifnasheeba-afk/resource-reservation-system.git
+cd resource-reservation-system
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+### 3. Create the PostgreSQL Database
+
+Open PostgreSQL and create a database named:
+
+```text
+resource_reservation_db
+```
+
+### 4. Configure Environment Variables
+
+Create a file named `.env` in the project root directory and add:
+
+```env
+DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/resource_reservation_db"
+```
+
+Replace `PASSWORD` with local PostgreSQL password. If your PostgreSQL username or port is different, update the connection URL accordingly.
+
+**Important:** Do not upload the `.env` file or your database password to GitHub.
+
+### 5. Generate Prisma Client
+
+```bash
+npx prisma generate
+```
+
+### 6. Apply Database Migrations
+
+```bash
+npx prisma migrate deploy
+```
+
+### 7. Start the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the following URL in your browser:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+http://localhost:3000
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## API Endpoints
 
-## Learn More
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/api/resources` | Retrieve resources |
+| POST | `/api/resources` | Create a resource |
+| GET | `/api/reservations` | Retrieve reservations |
+| POST | `/api/reservations` | Create a reservation |
 
-To learn more about Next.js, take a look at the following resources:
+## Reservation Conflict Prevention
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The system checks existing reservations for the selected resource and time period. If the requested reservation overlaps with an existing reservation, the system rejects the booking.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The overlap condition is:
 
-## Deploy on Vercel
+```text
+requestedStart < existingEnd
+AND
+requestedEnd > existingStart
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+This allows reservations to be made for separate, non-overlapping time periods.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Database Design
+
+The database contains two main entities:
+
+- **Resource:** Stores resource details such as name, type, description, location, and capacity.
+- **Reservation:** Stores reservation details, user information, start and end times, status, and the related resource ID.
+
+**Relationship:** One resource can have many reservations. Each reservation belongs to one resource.
+
+## Repository
+
+GitHub: https://github.com/shifnasheeba-afk/resource-reservation-system
